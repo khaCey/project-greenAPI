@@ -2,11 +2,12 @@ const dbConnect = require('../../config/db.config');
 
 var Employee = function (employee) {
   (this.firstName = employee.firstName),
-    (this.lastName = employee.lastName),
-    (this.email = employee.email),
-    (this.phone = employee.phone),
-    (this.dateOfCreation = employee.dateOfCreation),
-    (this.dateOfUpdate = employee.dateOfUpdate);
+  (this.lastName = employee.lastName),
+  (this.email = employee.email),
+  (this.phone = employee.phone),
+  (this.password = employee.password),
+  (this.dateOfCreation = employee.dateOfCreation),
+  (this.dateOfUpdate = employee.dateOfUpdate);
 };
 
 Employee.getAllEmployee = (result) => {
@@ -55,12 +56,13 @@ Employee.updateEmployee = (id, employeeReqData, result) => {
     employeeReqData.address,
     employeeReqData.email,
     employeeReqData.phone,
+    employeeReqData.password,
     employeeReqData.dateOfBirth,
     employeeReqData.dateOfUpdate,
     id,
   ];
   dbConnect.query(
-    'UPDATE employee SET firstName=?, lastName=?, address=?, email=?, phone=?, dateOfBirth=?, dateOfUpdate=? WHERE employeeID=?',
+    'UPDATE employee SET firstName=?, lastName=?, address=?, email=?, phone=?, password=?, dateOfBirth=?, dateOfUpdate=? WHERE employeeID=?',
     data,
     (err, res) => {
       if (err) {
@@ -90,4 +92,17 @@ Employee.deleteEmployee = (id, result) => {
     }
   );
 };
+
+Employee.login = (id, inputPass, result) => {
+  dbConnect.query('SELECT * FROM employee WHERE id=?', id, (err, res) => {
+      if (err) {
+          console.log('Error whilst fetching employee by ID', err);
+          result(false);
+      }
+      else {
+          if (res.password === inputPass) result(true);
+          else result(false);
+      }
+  });
+}
 module.exports = Employee;

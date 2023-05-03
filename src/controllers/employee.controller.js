@@ -60,3 +60,10 @@ exports.deleteEmployee = (req, res) => {
     else res.json({ success: true, message: 'Employee Deleted' });
   });
 };
+
+exports.login = (req, res) => {
+  EmployeeModel.login(req.params.id, req.params.password, (err, result) => {
+      if (err) res.send(err);
+      else res.send(result);
+  })
+}

@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 8080;
 
 const employeeRoutes = require('./src/routes/employee.route');
-const hoursRoutes = require('./src/routes/hours.route');
 const recordsRoutes = require('./src/routes/records.route');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,8 +24,6 @@ app.use('/api', (req, res, next) => {
 
 
 app.use('/api/v1/employee', employeeRoutes);
-
-app.use('/api/v1/hours', hoursRoutes);
 
 app.use('/api/v1/records', recordsRoutes);
 
