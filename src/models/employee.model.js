@@ -1,4 +1,5 @@
 const dbConnect = require('../../config/db.config');
+const bcrypt = require('bcrypt');
 
 var Employee = function (employee) {
   (this.firstName = employee.firstName),
@@ -94,15 +95,16 @@ Employee.deleteEmployee = (id, result) => {
 };
 
 Employee.login = (id, inputPass, result) => {
-  dbConnect.query('SELECT * FROM employee WHERE id=?', id, (err, res) => {
-      if (err) {
-          console.log('Error whilst fetching employee by ID', err);
-          result(false);
-      }
-      else {
-          if (res.password === inputPass) result(true);
-          else result(false);
-      }
+  dbConnect.query('SELECT * FROM employee WHERE employeeID=?', id, (err, res) => {
+    if (err) {
+      console.log('Error whilst fetching employee by ID', err);
+      result(false);
+    }
+    else {
+      bcrypt.compare(inputPass, res[0].password, (err, auth) => {
+        result(auth);
+      });
+    }
   });
 }
 module.exports = Employee;

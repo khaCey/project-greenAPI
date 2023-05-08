@@ -1,11 +1,10 @@
 const mysql = require('mysql');
 
 const dbConnect = mysql.createConnection({
-  host: '34.146.1.231',
-  user: 'khacey',
-  password: '!Oliachan123',
+  host: 'localhost',
+  user: 'root',
+  password: '',
   database: 'greendatabase',
-  socketPath: '/cloudsql/quantum-chemist-385603:asia-northeast1:green-api',
 });
 
 dbConnect.connect((err) => {
