@@ -1,18 +1,18 @@
 const mysql = require('mysql');
+const util = require('util');
+require('dotenv').config();
 
-const dbConnect = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'greendatabase',
+const pool = mysql.createPool({
+  connectionLimit : 10,  //default value is 10
+  host:     process.env.host,
+  user:     process.env.user,
+  password: process.env.password,
+  database: process.env.database,
 });
 
-dbConnect.connect((err) => {
-  if (err) {
-    console.error('Error connecting to database:', err);
-    return;
-  }
-  console.log('Connected to database!');
-});
+pool.on('connection', () => console.log('Connected to database!'));
 
-module.exports = dbConnect;
+// Promisify for Node.js async/await.
+pool.query = util.promisify(pool.query);
+
+module.exports = pool;

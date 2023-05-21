@@ -9,6 +9,10 @@ router.get('/', recordsController.getRecordsList);
 
 router.get('/:id', recordsController.getRecordByID);
 
+router.get('/latest/:id', recordsController.getLatestRecordByEmployeeID);
+
+router.get('/:employeeID/:startDate/:endDate', recordsController.getRecordsForEmployeeForDateRange);
+
 router.post('/', recordsController.createNewRecord);
 
 router.put('/:id', recordsController.updateRecord);
