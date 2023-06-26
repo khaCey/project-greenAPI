@@ -1,16 +1,15 @@
-const mysql = require('mysql');
+const { Pool } = require('pg');
 const util = require('util');
 require('dotenv').config();
 
-const pool = mysql.createPool({
-  connectionLimit : 10,  //default value is 10
-  host:     process.env.host,
-  user:     process.env.user,
-  password: process.env.password,
-  database: process.env.database,
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL, // Get the connection string from Heroku Config Vars
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-pool.on('connection', () => console.log('Connected to database!'));
+pool.on('connect', () => console.log('Connected to database!'));
 
 // Promisify for Node.js async/await.
 pool.query = util.promisify(pool.query);

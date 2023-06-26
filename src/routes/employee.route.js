@@ -16,6 +16,4 @@ router.delete('/:id', employeeController.deleteEmployee);
 
 router.post('/login', employeeController.login);
 
-
-
 module.exports = router;

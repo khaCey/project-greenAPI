@@ -49,7 +49,10 @@ exports.createNewRecord = async (req, res) => {
     console.log(time.getMinutes());
     time.setMinutes(time.getMinutes() + 50);
     console.log(time.getMinutes());
-    time.setMinutes(0, 0, 0);  // reset minutes, seconds, and milliseconds to 0
+
+    // This line has been removed
+    // time.setMinutes(0, 0, 0);  // reset minutes, seconds, and milliseconds to 0
+
     console.log(time);
     req.body.time = time;
     console.log(req.body.time);

@@ -2,14 +2,14 @@ const dbConnect = require('../../config/db.config');
 const bcrypt = require('bcrypt');
 
 var Employee = function (employee) {
-  (this.firstName = employee.firstName),
-  (this.lastName = employee.lastName),
-  (this.email = employee.email),
-  (this.phone = employee.phone),
-  (this.privileges = employee.privileges),
-  (this.password = employee.password),
-  (this.dateOfCreation = employee.dateOfCreation),
-  (this.dateOfUpdate = employee.dateOfUpdate);
+  this.firstName = employee.firstName;
+  this.lastName = employee.lastName;
+  this.email = employee.email;
+  this.phone = employee.phone;
+  this.privileges = employee.privileges;
+  this.password = employee.password;
+  this.dateOfCreation = employee.dateOfCreation;
+  this.dateOfUpdate = employee.dateOfUpdate;
 };
 
 Employee.getAllEmployee = () => {
@@ -20,7 +20,7 @@ Employee.getAllEmployee = () => {
         reject(err);
       } else {
         console.log('Employees fetched successfully');
-        resolve(res);
+        resolve(res.rows);
       }
     });
   });
@@ -29,14 +29,14 @@ Employee.getAllEmployee = () => {
 Employee.getEmployeeByID = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'SELECT * FROM employee WHERE employeeID=?',
-      id,
+      'SELECT * FROM employee WHERE employeeid=$1',
+      [id],
       (err, res) => {
         if (err) {
           console.log('Error whilst fetching employee by ID', err);
           reject(err);
         } else {
-          resolve(res);
+          resolve(res.rows);
         }
       }
     );
@@ -45,7 +45,7 @@ Employee.getEmployeeByID = (id) => {
 
 Employee.createEmployee = (employeeReqData) => {
   return new Promise((resolve, reject) => {
-    dbConnect.query('INSERT INTO employee SET ?', employeeReqData, (err, res) => {
+    dbConnect.query('INSERT INTO employee SET $1', [employeeReqData], (err, res) => {
       if (err) {
         console.log('Error inserting data' + err);
         reject(err);
@@ -72,7 +72,7 @@ Employee.updateEmployee = (id, employeeReqData) => {
   ];
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'UPDATE employee SET firstName=?, lastName=?, address=?, email=?, phone=?, password=?, dateOfBirth=?, dateOfUpdate=? WHERE employeeID=?',
+      'UPDATE employee SET firstname=$1, lastname=$2, address=$3, email=$4, phone=$5, privileges=$6, password=$7, dateofbirth=$8, dateofupdate=$9 WHERE employeeid=$10',
       data,
       (err, res) => {
         if (err) {
@@ -91,7 +91,7 @@ Employee.updateEmployee = (id, employeeReqData) => {
 Employee.deleteEmployee = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'DELETE FROM employee where employeeID=?',
+      'DELETE FROM employee where employeeid=$1',
       [id],
       (err, res) => {
         if (err) {
@@ -108,7 +108,6 @@ Employee.deleteEmployee = (id) => {
 
 Employee.login = (id, inputPass) => {
   return new Promise((resolve, reject) => {
-    // Convert the ID to a number and check if it's NaN
     const numId = Number(id);
     if (isNaN(numId)) {
       console.log("ID must be a number");
@@ -116,15 +115,14 @@ Employee.login = (id, inputPass) => {
       return;
     }
 
-    dbConnect.query('SELECT * FROM employee WHERE employeeID=?', numId, (err, res) => {
+    dbConnect.query('SELECT * FROM employee WHERE employeeid=$1', [numId], (err, res) => {
       if (err) {
         console.log('Error whilst fetching employee by ID', err);
         reject(err);
       } else {
         console.log(res);
-        // Check if res[0] is defined before trying to access its password property
-        if (res[0]) {
-          bcrypt.compare(inputPass, res[0].password, (err, auth) => {
+        if (res.rows.length) {
+          bcrypt.compare(inputPass, res.rows[0].password, (err, auth) => {
             if (err) {
               reject(err);
             } else {
@@ -132,7 +130,6 @@ Employee.login = (id, inputPass) => {
             }
           });
         } else {
-          // If there's no employee with the given ID, reject the promise
           console.log("ID not found");
           reject('No employee with the given ID found');
         }
@@ -140,7 +137,5 @@ Employee.login = (id, inputPass) => {
     });
   });
 }
-
-
 
 module.exports = Employee;
