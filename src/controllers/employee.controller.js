@@ -41,7 +41,6 @@ exports.createNewEmployee = async (req, res) => {
 
 exports.updateEmployee = async (req, res) => {
   try {
-    console.log(req.body);
     const employeeReqData = new EmployeeModel(req.body);
     employeeReqData.dateOfUpdate = new Date();
     if (req.body.constructor == Object && Object.keys(req.body).length === 0) {
@@ -68,7 +67,6 @@ exports.login = async (req, res) => {
   try {
     console.log("Fetching Employee");
     const result = await EmployeeModel.login(req.body.id, req.body.password);
-    console.log(result);
     if (result) {
       res.send({ success: true, message: 'Login successful' });
     } else {

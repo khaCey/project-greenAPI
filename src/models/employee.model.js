@@ -120,7 +120,6 @@ Employee.login = (id, inputPass) => {
         console.log('Error whilst fetching employee by ID', err);
         reject(err);
       } else {
-        console.log(res);
         if (res.rows.length) {
           bcrypt.compare(inputPass, res.rows[0].password, (err, auth) => {
             if (err) {
