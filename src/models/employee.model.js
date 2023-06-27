@@ -1,5 +1,5 @@
 const dbConnect = require('../../config/db.config');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 var Employee = function (employee) {
   this.firstName = employee.firstName;
