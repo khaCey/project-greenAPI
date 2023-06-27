@@ -9,7 +9,7 @@ var Record = function (record) {
 
 Record.getAllRecords = () => {
   return new Promise((resolve, reject) => {
-    dbConnect.query('SELECT * FROM records', (err, res) => {
+    dbConnect.query('SELECT * FROM "records"', (err, res) => {
       if (err) {
         console.log('Error whilst fetching records', err);
         reject(err);
@@ -23,7 +23,7 @@ Record.getAllRecords = () => {
 Record.getRecordByID = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'SELECT * FROM records WHERE employeeid=$1',
+      'SELECT * FROM "records" WHERE "employeeID"=$1',
       [id],
       (err, res) => {
         if (err) {
@@ -40,7 +40,7 @@ Record.getRecordByID = (id) => {
 Record.getLatestRecordByEmployeeID = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'SELECT * FROM records WHERE employeeid=$1 ORDER BY time DESC LIMIT 1',
+      'SELECT * FROM "records" WHERE "employeeID"=$1 ORDER BY "time" DESC LIMIT 1',
       [id],
       (err, res) => {
         if (err) {
@@ -57,7 +57,7 @@ Record.getLatestRecordByEmployeeID = (id) => {
 Record.getRecordsForEmployeeForDateRange = (employeeID, startDate, endDate) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      `SELECT * FROM records WHERE employeeid = $1 AND time BETWEEN $2 AND $3 ORDER BY time ASC`,
+      `SELECT * FROM "records" WHERE "employeeID" = $1 AND "time" BETWEEN $2 AND $3 ORDER BY "time" ASC`,
       [employeeID, startDate, endDate],
       (err, res) => {
         if (err) {
@@ -74,7 +74,8 @@ Record.getRecordsForEmployeeForDateRange = (employeeID, startDate, endDate) => {
 Record.createRecord = (recordReqData) => {
   console.log("creating record");
   return new Promise((resolve, reject) => {
-    dbConnect.query('INSERT INTO records SET $1', [recordReqData], (err, res) => {
+    // Correct SQL syntax for inserting data
+    dbConnect.query('INSERT INTO "records" ("employeeID", "time", "type") VALUES ($1, $2, $3)', [recordReqData.employeeID, recordReqData.time, recordReqData.type], (err, res) => {
       if (err) {
         console.log('Error inserting data' + err);
         reject(err);
@@ -90,7 +91,7 @@ Record.updateRecord = (id, recordReqData) => {
   data = [recordReqData.employeeID, recordReqData.time, recordReqData.type, id];
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'UPDATE records SET employeeid=$1, time=$2, type=$3 WHERE id=$4',
+      'UPDATE "records" SET "employeeID"=$1, "time"=$2, "type"=$3 WHERE "id"=$4',
       data,
       (err, res) => {
         if (err) {
@@ -108,7 +109,7 @@ Record.updateRecord = (id, recordReqData) => {
 
 Record.deleteRecord = (id) => {
   return new Promise((resolve, reject) => {
-    dbConnect.query('DELETE FROM records where id=$1', [id], (err, res) => {
+    dbConnect.query('DELETE FROM "records" where "id"=$1', [id], (err, res) => {
       if (err) {
         console.log('Error Deleting Record');
         reject(err);

@@ -14,7 +14,7 @@ var Employee = function (employee) {
 
 Employee.getAllEmployee = () => {
   return new Promise((resolve, reject) => {
-    dbConnect.query('SELECT * FROM employee', (err, res) => {
+    dbConnect.query('SELECT * FROM "employee"', (err, res) => {
       if (err) {
         console.log('Error whilst fetching employees', err);
         reject(err);
@@ -29,7 +29,7 @@ Employee.getAllEmployee = () => {
 Employee.getEmployeeByID = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'SELECT * FROM employee WHERE employeeid=$1',
+      'SELECT * FROM "employee" WHERE "employeeID"=$1',
       [id],
       (err, res) => {
         if (err) {
@@ -45,7 +45,7 @@ Employee.getEmployeeByID = (id) => {
 
 Employee.createEmployee = (employeeReqData) => {
   return new Promise((resolve, reject) => {
-    dbConnect.query('INSERT INTO employee SET $1', [employeeReqData], (err, res) => {
+    dbConnect.query('INSERT INTO "employee" SET $1', [employeeReqData], (err, res) => {
       if (err) {
         console.log('Error inserting data' + err);
         reject(err);
@@ -72,7 +72,7 @@ Employee.updateEmployee = (id, employeeReqData) => {
   ];
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'UPDATE employee SET firstname=$1, lastname=$2, address=$3, email=$4, phone=$5, privileges=$6, password=$7, dateofbirth=$8, dateofupdate=$9 WHERE employeeid=$10',
+      'UPDATE "employee" SET "firstName"=$1, "lastName"=$2, "address"=$3, "email"=$4, "phone"=$5, "privileges"=$6, "password"=$7, "dateOfBirth"=$8, "dateOfUpdate"=$9 WHERE "employeeID"=$10',
       data,
       (err, res) => {
         if (err) {
@@ -91,7 +91,7 @@ Employee.updateEmployee = (id, employeeReqData) => {
 Employee.deleteEmployee = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
-      'DELETE FROM employee where employeeid=$1',
+      'DELETE FROM "employee" where "employeeID"=$1',
       [id],
       (err, res) => {
         if (err) {
@@ -115,7 +115,7 @@ Employee.login = (id, inputPass) => {
       return;
     }
 
-    dbConnect.query('SELECT * FROM employee WHERE employeeid=$1', [numId], (err, res) => {
+    dbConnect.query('SELECT * FROM "employee" WHERE "employeeID"=$1', [numId], (err, res) => {
       if (err) {
         console.log('Error whilst fetching employee by ID', err);
         reject(err);
