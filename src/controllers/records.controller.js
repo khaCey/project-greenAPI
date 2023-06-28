@@ -43,15 +43,7 @@ exports.getRecordsForEmployeeForDateRange = async (req, res) => {
 
 exports.createNewRecord = async (req, res) => {
   try {
-    console.log(req.body);
-    
     let time = new Date();
-    console.log(time.getMinutes());
-    time.setMinutes(time.getMinutes() + 50);
-    console.log(time.getMinutes());
-
-    // This line has been removed
-    // time.setMinutes(0, 0, 0);  // reset minutes, seconds, and milliseconds to 0
 
     console.log(time);
     req.body.time = time;
