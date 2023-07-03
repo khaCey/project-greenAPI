@@ -12,6 +12,16 @@ exports.getEmployeeList = async (req, res) => {
   }
 };
 
+exports.getEmployeeListDisplayable = async (req, res) => {
+    try {
+      console.log('employee list');
+      const employees = await EmployeeModel.getAllEmployeeDisplayable();
+      res.send(employees);
+    } catch (err) {
+      res.send(err);
+    }
+  };
+
 exports.getEmployeeByID = async (req, res) => {
   try {
     const employee = await EmployeeModel.getEmployeeByID(req.params.id);

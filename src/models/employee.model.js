@@ -26,6 +26,20 @@ Employee.getAllEmployee = () => {
   });
 };
 
+Employee.getAllEmployeeDisplayable = () => {
+    return new Promise((resolve, reject) => {
+      dbConnect.query('SELECT * FROM "employee" WHERE Displayable = true', (err, res) => {
+        if (err) {
+          console.log('Error whilst fetching employees', err);
+          reject(err);
+        } else {
+          console.log('Employees fetched successfully');
+          resolve(res.rows);
+        }
+      });
+    });
+};
+
 Employee.getEmployeeByID = (id) => {
   return new Promise((resolve, reject) => {
     dbConnect.query(
