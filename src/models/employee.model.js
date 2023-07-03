@@ -60,7 +60,7 @@ Employee.getEmployeeByID = (id) => {
 Employee.createEmployee = (employeeReqData) => {
     return new Promise((resolve, reject) => {
       const { FirstName, LastName, Email, Phone, Password } = employeeReqData;
-      const query = 'INSERT INTO employee(first_name, last_name, email, phone, password) VALUES($1, $2, $3, $4, $5)';
+      const query = 'INSERT INTO employee(firstName, lastName, email, phone, password) VALUES($1, $2, $3, $4, $5)';
       const values = [FirstName, LastName, Email, Phone, Password];
   
       dbConnect.query(query, values, (err, res) => {
