@@ -58,18 +58,22 @@ Employee.getEmployeeByID = (id) => {
 };
 
 Employee.createEmployee = (employeeReqData) => {
-  return new Promise((resolve, reject) => {
-    dbConnect.query('INSERT INTO "employee" SET $1', [employeeReqData], (err, res) => {
-      if (err) {
-        console.log('Error inserting data' + err);
-        reject(err);
-      } else {
-        console.log('Employee created!');
-        resolve(res);
-      }
+    return new Promise((resolve, reject) => {
+      const { FirstName, LastName, Email, Phone, Password } = employeeReqData;
+      const query = 'INSERT INTO employee(first_name, last_name, email, phone, password) VALUES($1, $2, $3, $4, $5)';
+      const values = [FirstName, LastName, Email, Phone, Password];
+  
+      dbConnect.query(query, values, (err, res) => {
+        if (err) {
+          console.log('Error inserting data', err);
+          reject(err);
+        } else {
+          console.log('Employee created!');
+          resolve(res);
+        }
+      });
     });
-  });
-};
+  };
 
 Employee.updateEmployee = (id, employeeReqData) => {
   data = [
