@@ -59,7 +59,6 @@ Employee.getEmployeeByID = (id) => {
 
 Employee.createEmployee = (employeeReqData) => {
     const data = [
-        employeeReqData.employeeID,
         employeeReqData.firstName,
         employeeReqData.lastName,
         employeeReqData.email,
@@ -72,8 +71,8 @@ Employee.createEmployee = (employeeReqData) => {
 
     return new Promise((resolve, reject) => {
         dbConnect.query(
-            `INSERT INTO "employee" ("employeeID", "firstName", "lastName", "email", "phone", "privileges", "password", "dateOfCreation", "dateOfUpdate")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            `INSERT INTO "employee" ("firstName", "lastName", "email", "phone", "privileges", "password", "dateOfCreation", "dateOfUpdate")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
             data,
             (err, res) => {
                 if (err) {
