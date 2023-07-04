@@ -33,6 +33,10 @@ app.use('/api/v1/employee', employeeRoutes);
 
 app.use('/api/v1/records', recordsRoutes);
 
+app.use(cors({
+    origin: 'http://localhost:5173'  // or the domain of your client-side app
+}));
+
 app.listen(
     PORT,
     () => {
