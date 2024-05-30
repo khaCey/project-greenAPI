@@ -1,17 +1,21 @@
-const { Pool } = require('pg');
-const util = require('util');
+const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Get the connection string from Heroku Config Vars
-  ssl: {
-    rejectUnauthorized: false
-  }
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT
 });
 
-pool.on('connect', () => console.log('Connected to database!'));
-
-// Promisify for Node.js async/await.
-pool.query = util.promisify(pool.query);
+pool.getConnection()
+  .then(connection => {
+    console.log('Connected to database!');
+    connection.release();
+  })
+  .catch(err => {
+    console.error('Connection test failed:', err);
+  });
 
 module.exports = pool;

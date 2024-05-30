@@ -12,52 +12,39 @@ var Employee = function (employee) {
     this.dateOfUpdate = employee.dateOfUpdate;
 };
 
-Employee.getAllEmployee = () => {
-    return new Promise((resolve, reject) => {
-        dbConnect.query('SELECT * FROM "employee"', (err, res) => {
-            if (err) {
-                console.log('Error whilst fetching employees', err);
-                reject(err);
-            } else {
-                console.log('Employees fetched successfully');
-                resolve(res.rows);
-            }
-        });
-    });
+Employee.getAllEmployee = async () => {
+    try {
+        const [rows, fields] = await dbConnect.query('SELECT * FROM `employee`');
+        console.log('Query Result:', rows);
+        return rows;
+    } catch (err) {
+        console.log('Error whilst fetching employees', err);
+        throw err;
+    }
 };
 
-Employee.getAllEmployeeDisplayable = () => {
-    return new Promise((resolve, reject) => {
-        dbConnect.query('SELECT * FROM "employee" WHERE Displayable = true', (err, res) => {
-            if (err) {
-                console.log('Error whilst fetching employees', err);
-                reject(err);
-            } else {
-                console.log('Employees fetched successfully');
-                resolve(res.rows);
-            }
-        });
-    });
+Employee.getAllEmployeeDisplayable = async () => {
+    try {
+        const [rows, fields] = await dbConnect.query('SELECT * FROM `employee` WHERE `Displayable` = true');
+        console.log('Employees fetched successfully');
+        return rows;
+    } catch (err) {
+        console.log('Error whilst fetching employees', err);
+        throw err;
+    }
 };
 
-Employee.getEmployeeByID = (id) => {
-    return new Promise((resolve, reject) => {
-        dbConnect.query(
-            'SELECT * FROM "employee" WHERE "employeeID"=$1',
-            [id],
-            (err, res) => {
-                if (err) {
-                    console.log('Error whilst fetching employee by ID', err);
-                    reject(err);
-                } else {
-                    resolve(res.rows);
-                }
-            }
-        );
-    });
+Employee.getEmployeeByID = async (id) => {
+    try {
+        const [rows, fields] = await dbConnect.query('SELECT * FROM `employee` WHERE `employeeID` = ?', [id]);
+        return rows;
+    } catch (err) {
+        console.log('Error whilst fetching employee by ID', err);
+        throw err;
+    }
 };
 
-Employee.createEmployee = (employeeReqData) => {
+Employee.createEmployee = async (employeeReqData) => {
     const data = [
         employeeReqData.firstName,
         employeeReqData.lastName,
@@ -69,26 +56,22 @@ Employee.createEmployee = (employeeReqData) => {
         employeeReqData.dateOfUpdate
     ];
 
-    return new Promise((resolve, reject) => {
-        dbConnect.query(
-            `INSERT INTO "employee" ("firstName", "lastName", "email", "phone", "privileges", "password", "dateOfCreation", "dateOfUpdate")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            data,
-            (err, res) => {
-                if (err) {
-                    console.log('Error inserting data' + err);
-                    reject(err);
-                } else {
-                    console.log('Employee created!');
-                    resolve(res);
-                }
-            }
+    try {
+        const [result] = await dbConnect.query(
+            `INSERT INTO \`employee\` (\`firstName\`, \`lastName\`, \`email\`, \`phone\`, \`privileges\`, \`password\`, \`dateOfCreation\`, \`dateOfUpdate\`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            data
         );
-    });
+        console.log('Employee created!');
+        return result;
+    } catch (err) {
+        console.log('Error inserting data', err);
+        throw err;
+    }
 };
 
-Employee.updateEmployee = (id, employeeReqData) => {
-    data = [
+Employee.updateEmployee = async (id, employeeReqData) => {
+    const data = [
         employeeReqData.firstName,
         employeeReqData.lastName,
         employeeReqData.address,
@@ -100,71 +83,51 @@ Employee.updateEmployee = (id, employeeReqData) => {
         employeeReqData.dateOfUpdate,
         id,
     ];
-    return new Promise((resolve, reject) => {
-        dbConnect.query(
-            'UPDATE "employee" SET "firstName"=$1, "lastName"=$2, "address"=$3, "email"=$4, "phone"=$5, "privileges"=$6, "password"=$7, "dateOfBirth"=$8, "dateOfUpdate"=$9 WHERE "employeeID"=$10',
-            data,
-            (err, res) => {
-                if (err) {
-                    console.log('Error Updating Employee');
-                    console.log(err);
-                    reject(err);
-                } else {
-                    console.log('Updated');
-                    resolve(res);
-                }
-            }
+
+    try {
+        const [result] = await dbConnect.query(
+            'UPDATE `employee` SET `firstName` = ?, `lastName` = ?, `address` = ?, `email` = ?, `phone` = ?, `privileges` = ?, `password` = ?, `dateOfBirth` = ?, `dateOfUpdate` = ? WHERE `employeeID` = ?',
+            data
         );
-    });
+        console.log('Updated');
+        return result;
+    } catch (err) {
+        console.log('Error Updating Employee', err);
+        throw err;
+    }
 };
 
-Employee.deleteEmployee = (id) => {
-    return new Promise((resolve, reject) => {
-        dbConnect.query(
-            'DELETE FROM "employee" where "employeeID"=$1',
-            [id],
-            (err, res) => {
-                if (err) {
-                    console.log('Error Deleting Employee');
-                    reject(err);
-                } else {
-                    console.log('DELETED');
-                    resolve(res);
-                }
-            }
-        );
-    });
+Employee.deleteEmployee = async (id) => {
+    try {
+        const [result] = await dbConnect.query('DELETE FROM `employee` WHERE `employeeID` = ?', [id]);
+        console.log('DELETED');
+        return result;
+    } catch (err) {
+        console.log('Error Deleting Employee', err);
+        throw err;
+    }
 };
 
-Employee.login = (id, inputPass) => {
-    return new Promise((resolve, reject) => {
-        const numId = Number(id);
-        if (isNaN(numId)) {
-            console.log("ID must be a number");
-            reject('ID must be a number');
-            return;
+Employee.login = async (id, inputPass) => {
+    const numId = Number(id);
+    if (isNaN(numId)) {
+        console.log("ID must be a number");
+        throw new Error('ID must be a number');
+    }
+
+    try {
+        const [rows, fields] = await dbConnect.query('SELECT * FROM `employee` WHERE `employeeID` = ?', [numId]);
+        if (rows.length) {
+            const auth = await bcrypt.compare(inputPass, rows[0].password);
+            return auth;
+        } else {
+            console.log("ID not found");
+            throw new Error('No employee with the given ID found');
         }
-
-        dbConnect.query('SELECT * FROM "employee" WHERE "employeeID"=$1', [numId], (err, res) => {
-            if (err) {
-                console.log('Error whilst fetching employee by ID', err);
-                reject(err);
-            } else {
-                if (res.rows.length) {
-                    bcrypt.compare(inputPass, res.rows[0].password, (err, auth) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(auth);
-                        }
-                    });
-                } else {
-                    console.log("ID not found");
-                    reject('No employee with the given ID found');
-                }
-            }
-        });
-    });
-}
+    } catch (err) {
+        console.log('Error whilst fetching employee by ID', err);
+        throw err;
+    }
+};
 
 module.exports = Employee;
