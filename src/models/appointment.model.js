@@ -10,11 +10,14 @@ var Appointment = function (appointment) {
     this.rescheduledAt = appointment.rescheduledAt;
     this.createdAt = appointment.createdAt;
     this.updatedAt = appointment.updatedAt;
+    this.name = appointment.name;
+    this.email = appointment.email;
+    this.phoneNumber = appointment.phoneNumber;
 };
 
 Appointment.getAllAppointments = async () => {
     try {
-        const [rows, fields] = await dbConnect.query('SELECT * FROM appointments');
+        const [rows, fields] = await dbConnect.query('SELECT * FROM appointment');
         return rows;
     } catch (err) {
         console.log('Error whilst fetching appointments', err);
@@ -29,13 +32,16 @@ Appointment.createAppointment = async (appointmentReqData) => {
         appointmentReqData.title,
         appointmentReqData.description,
         appointmentReqData.createdBy,
-        appointmentReqData.status || 'scheduled'
+        appointmentReqData.status || 'scheduled',
+        appointmentReqData.name,
+        appointmentReqData.email,
+        appointmentReqData.phoneNumber
     ];
 
     try {
         const [result] = await dbConnect.query(
-            `INSERT INTO appointments (startDate, endDate, title, description, createdBy, status)
-            VALUES (?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO appointment (startDate, endDate, title, description, createdBy, status, name, email, phoneNumber)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             data
         );
         return result;
@@ -50,7 +56,7 @@ Appointment.rescheduleAppointment = async (id, startDate, endDate) => {
 
     try {
         const [result] = await dbConnect.query(
-            'UPDATE appointments SET startDate = ?, endDate = ?, rescheduledAt = ? WHERE id = ?',
+            'UPDATE appointment SET startDate = ?, endDate = ?, rescheduledAt = ? WHERE id = ?',
             [startDate, endDate, rescheduledAt, id]
         );
         return result;

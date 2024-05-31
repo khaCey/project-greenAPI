@@ -35,17 +35,36 @@ exports.getEmployeeByID = async (req, res) => {
 
 exports.createNewEmployee = async (req, res) => {
   try {
-    console.log('Request Body:', req.body);
-    req.body.dateOfCreation = new Date();
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-    req.body.password = hashedPassword;
-    const employeeReqData = new EmployeeModel(req.body);
-    if (Object.keys(req.body).length === 0) {
+    const { firstName, lastName, email, phone, password, privileges } = req.body;
+    
+    // Check for missing required fields
+    if (!firstName || !lastName || !email || !phone || !password || !privileges) {
       console.log('Invalid Data');
-      return res.status(400).send({ success: false, message: 'Invalid Data.' });
+      return res.status(400).send({ success: false, message: 'All fields are required.' });
     }
+
+    console.log('Request Body:', req.body);
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create employee data with hashed password
+    const employeeReqData = new EmployeeModel({
+      firstName,
+      lastName,
+      email,
+      phone,
+      privileges,
+      password: hashedPassword,
+      dateOfCreation: new Date(),
+      dateOfUpdate: new Date()
+    });
+
     console.log('Valid Data:', employeeReqData);
+
+    // Create the employee
     const employee = await EmployeeModel.createEmployee(employeeReqData);
+
     res.json({ status: true, message: 'Employee Created', data: employee });
   } catch (err) {
     console.error('Error:', err);

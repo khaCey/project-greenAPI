@@ -10,7 +10,7 @@ exports.getAppointments = async (req, res) => {
 };
 
 exports.createAppointment = async (req, res) => {
-  const { startDate, endDate, title, description, createdBy, status } = req.body;
+  const { startDate, endDate, title, description, createdBy, status, name, email, phoneNumber } = req.body;
 
   try {
     const result = await AppointmentModel.createAppointment({
@@ -19,7 +19,10 @@ exports.createAppointment = async (req, res) => {
       title,
       description,
       createdBy,
-      status
+      status,
+      name,
+      email,
+      phoneNumber
     });
     res.status(201).send({ message: 'Appointment created', appointmentId: result.insertId });
   } catch (err) {
