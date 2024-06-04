@@ -32,7 +32,7 @@ Appointment.createAppointment = async (appointmentReqData) => {
         appointmentReqData.title,
         appointmentReqData.description,
         appointmentReqData.createdBy,
-        appointmentReqData.status || 'scheduled',
+        appointmentReqData.status || 'reserved',
         appointmentReqData.name,
         appointmentReqData.email,
         appointmentReqData.phoneNumber
@@ -56,8 +56,34 @@ Appointment.rescheduleAppointment = async (id, startDate, endDate) => {
 
     try {
         const [result] = await dbConnect.query(
-            'UPDATE appointment SET startDate = ?, endDate = ?, rescheduledAt = ? WHERE id = ?',
+            'UPDATE appointment SET startDate = ?, endDate = ?, rescheduledAt = ?, status = "rescheduled" WHERE id = ?',
             [startDate, endDate, rescheduledAt, id]
+        );
+        return result;
+    } catch (err) {
+        console.log('Error updating data', err);
+        throw err;
+    }
+};
+
+Appointment.cancelAppointment = async (id) => {
+    try {
+        const [result] = await dbConnect.query(
+            'UPDATE appointment SET status = "cancelled" WHERE id = ?',
+            [id]
+        );
+        return result;
+    } catch (err) {
+        console.log('Error updating data', err);
+        throw err;
+    }
+};
+
+Appointment.confirmAppointment = async (id) => {
+    try {
+        const [result] = await dbConnect.query(
+            'UPDATE appointment SET status = "scheduled" WHERE id = ?',
+            [id]
         );
         return result;
     } catch (err) {

@@ -44,3 +44,31 @@ exports.rescheduleAppointment = async (req, res) => {
     res.status(500).send({ message: 'Error rescheduling appointment', error: err.message });
   }
 };
+
+exports.cancelAppointment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await AppointmentModel.cancelAppointment(id);
+    if (result.affectedRows === 0) {
+      return res.status(404).send({ message: 'Appointment not found' });
+    }
+    res.send({ message: 'Appointment cancelled' });
+  } catch (err) {
+    res.status(500).send({ message: 'Error cancelling appointment', error: err.message });
+  }
+};
+
+exports.confirmAppointment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await AppointmentModel.confirmAppointment(id);
+    if (result.affectedRows === 0) {
+      return res.status(404).send({ message: 'Appointment not found' });
+    }
+    res.send({ message: 'Appointment confirmed' });
+  } catch (err) {
+    res.status(500).send({ message: 'Error confirming appointment', error: err.message });
+  }
+};
